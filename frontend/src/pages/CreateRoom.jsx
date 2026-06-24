@@ -1,23 +1,24 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createRoom } from "../services/roomService";
 
 function CreateRoom() {
     const [name, setName] = useState("");
     const navigate = useNavigate();
 
-    const generateRoomCode = () => {
-        return Math.random().toString(36).substring(2, 8).toUpperCase();
-    };
+    const handleCreateRoom = async () => {
+        try {
+            const data = await createRoom();
 
-    const handleCreateRoom = () => {
-        const roomCode = generateRoomCode();
-
-        navigate(`/lobby/${roomCode}`, {
-            state: {
-                roomCode,
-                playerName: name,
-            },
-        });
+            navigate(`/lobby/${data.roomCode}`, {
+                state: {
+                    roomCode: data.roomCode,
+                    playerName: name,
+                },
+            });
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -26,7 +27,7 @@ function CreateRoom() {
 
             <input
                 type="text"
-                placeholder="Enter your name"
+                placeholder="Enter Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
             />
